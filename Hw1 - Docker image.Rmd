@@ -1,0 +1,68 @@
+---
+title: "New Docker Image Homework"
+output: html_notebook
+date: "19-01-24"
+---
+
+This is an [R Markdown](http://rmarkdown.rstudio.com) Notebook. When you execute code within the notebook, the results appear beneath the code. 
+
+Try executing this chunk by clicking the *Run* button within the chunk or by placing your cursor inside it and pressing *Ctrl+Shift+Enter*. 
+
+```{r}
+
+#Seed for reproducibility
+set.seed(0)
+
+#Implementation with DESeq2
+library(DESeq2)
+
+#Creating my data matrix
+data_matrix <- matrix(sample(1:200,50), nrow = 5)
+
+#Renaming columns and rows
+colnames(data_matrix) <- 
+           c('cond1', 'cond2', 'cond3', 'cond4', 'cond5', 
+             'ctrl1', 'ctrl2', 'ctrl3', 'ctrl4', 'ctrl5')
+rownames(data_matrix) <- c('gene1', 'gene2', 'gene3', 'gene4', 'gene5') 
+
+#Creating a sample information table to hold condition and control data
+# This allows the create of a DeSeq object from our count table
+col_labels<- as.data.frame(c("Condition","Condition","Condition","Condition","Condition",
+            "Ctrl","Ctrl","Ctrl","Ctrl","Ctrl"))
+colnames(col_labels) = "Condition"
+
+#Turning Matrix into DESeqdata input file
+deseq_data <- DESeqDataSetFromMatrix(data_matrix,col_labels,design = ~ Condition)
+
+#Running DESeq to get FC
+deseq_results <- results(DESeq((deseq_data)))
+
+deseq_fc <- as.data.frame(deseq_results$log2FoldChange)
+rownames(deseq_fc) <- rownames(deseq_results)
+colnames(deseq_fc) <- "Log2 Foldchange"
+
+print(deseq_fc)
+
+
+```
+```{r}
+#Implementation with Ratio Log2FC, data matrix is carried over
+
+# Fold change calculation function defined
+get_fc <- function(x) { fc_data <-
+  log2((mean(x[1:5]))/(mean(x[6:10])))
+return(fc_data)}
+
+#Caclulating foldchange
+foldchange_data = apply(data_matrix,1,get_fc)
+
+print(foldchange_data)
+
+
+```
+
+Add a new chunk by clicking the *Insert Chunk* button on the toolbar or by pressing *Ctrl+Alt+I*.
+
+When you save the notebook, an HTML file containing the code and output will be saved alongside it (click the *Preview* button or press *Ctrl+Shift+K* to preview the HTML file).
+
+The preview shows you a rendered HTML copy of the contents of the editor. Consequently, unlike *Knit*, *Preview* does not run any R code chunks. Instead, the output of the chunk when it was last run in the editor is displayed.
