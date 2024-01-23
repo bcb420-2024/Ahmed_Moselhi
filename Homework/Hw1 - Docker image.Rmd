@@ -26,7 +26,7 @@ colnames(data_matrix) <-
 rownames(data_matrix) <- c('gene1', 'gene2', 'gene3', 'gene4', 'gene5') 
 
 #Creating a sample information table to hold condition and control data
-# This allows the create of a DeSeq object from our count table
+# This allows the create of a DeSeq object from our count table (based on DESeq documentation)
 col_labels<- as.data.frame(c("Condition","Condition","Condition","Condition","Condition",
             "Ctrl","Ctrl","Ctrl","Ctrl","Ctrl"))
 colnames(col_labels) = "Condition"
